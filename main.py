@@ -83,9 +83,9 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.hints_tv.show()
 
     def create_my_answer(self):
-        text = '<hint1>\n\n' + self.hint1_le.text() + '\n\n</hint1>\n\n' + \
-               '<hint2>\n\n' + self.hint2_le.text() + '\n\n</hint2>\n\n' + \
-               '<hint3>\n\n' + self.hint3_le.text() + '\n\n</hint3>\n\n'
+        text = '<hint1>\n' + self.hint1_le.text() + '\n</hint1>\n\n' + \
+               '<hint2>\n' + self.hint2_le.text() + '\n</hint2>\n\n' + \
+               '<hint3>\n' + self.hint3_le.text() + '\n</hint3>'
         self.answer_pte.clear()
         self.answer_pte.appendPlainText(text)
 
