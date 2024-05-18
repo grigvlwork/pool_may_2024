@@ -66,18 +66,20 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_sql_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text FROM hints WHERE topic = 0 ORDER BY text")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 0 ORDER BY Подсказка")
         self.model.setQuery(self.load_query)
         # self.hints_tv.setColumnHidden(0, True)
         self.hints_tv.resizeColumnToContents(0)
+        self.hints_tv.verticalHeader().setVisible(False)
         self.hints_tv.show()
 
     def choose_python_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text FROM hints WHERE topic = 1 ORDER BY text")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 1 ORDER BY Подсказка")
         self.model.setQuery(self.load_query)
         # self.hints_tv.setColumnHidden(0, True)
         self.hints_tv.resizeColumnToContents(0)
+        self.hints_tv.verticalHeader().setVisible(False)
         self.hints_tv.show()
 
     def create_my_answer(self):
