@@ -2,9 +2,12 @@ import sys
 import traceback
 import pyperclip
 import qdarkstyle
+import sqlite3
+from PyQt5.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery, QSqlQueryModel
 from mainwindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
+
 
 
 class MyWidget(QMainWindow, Ui_MainWindow):
@@ -14,7 +17,39 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.hint1_le.textChanged.connect(self.create_my_answer)
         self.hint2_le.textChanged.connect(self.create_my_answer)
         self.hint3_le.textChanged.connect(self.create_my_answer)
+        # self.hint1_le.clicked.connect(self.set_current_hint(1))
+        # self.hint1_le.clicked.connect(self.set_current_hint(2))
+        # self.hint1_le.clicked.connect(self.set_current_hint(3))
         self.copy_answer_btn.clicked.connect(self.copy_my_answer)
+        self.db = QSqlDatabase.addDatabase('QSQLITE')
+        self.db.setDatabaseName('hints.db')
+        self.db.open()
+        self.sql_env_rb.clicked.connect(self.choose_sql_model)
+        self.python_env_rb.clicked.connect(self.choose_python_model)
+        self.load_query = QSqlQuery(self.db)
+        self.add_query = QSqlQuery(self.db)
+        self.model = QSqlQueryModel()
+        self.current_hint = None
+        # self.model.setTable('hints')
+        # self.model.select()
+        self.hints_tv.setModel(self.model)
+
+    def set_current_hint(self, number):
+        self.current_hint = number
+        print(number)
+
+
+    def choose_sql_model(self):
+        self.load_query.clear()
+        self.load_query.exec("SELECT text FROM hints WHERE topic = 0 ORDER BY text")
+        self.model.setQuery(self.load_query)
+        self.hints_tv.show()
+
+    def choose_python_model(self):
+        self.load_query.clear()
+        self.load_query.exec("SELECT text FROM hints WHERE topic = 1 ORDER BY text")
+        self.model.setQuery(self.load_query)
+        self.hints_tv.show()
 
     def create_my_answer(self):
         text = '<hint1>\n' + self.hint1_le.text() + '\n</hint1>\n\n' + \
@@ -25,6 +60,18 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def copy_my_answer(self):
         pyperclip.copy(self.answer_pte.toPlainText())
+        if self.sql_env_rb.isChecked():
+            topic = 0
+        else:
+            topic = 1
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
+        self.db.commit()
+        self.hints_tv.show()
+
+
+
 
 
 def excepthook(exc_type, exc_value, exc_tb):
@@ -45,3 +92,4 @@ if __name__ == '__main__':
     app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5', palette=qdarkstyle.DarkPalette))
     ex.show()
     sys.exit(app.exec_())
+
