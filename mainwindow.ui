@@ -45,7 +45,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="clear_hint1">
+           <widget class="QPushButton" name="clear_hint1_btn">
             <property name="font">
              <font>
               <family>Consolas</family>
@@ -58,7 +58,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="copy_hint1">
+           <widget class="QPushButton" name="copy_hint1_btn">
             <property name="font">
              <font>
               <family>Consolas</family>
@@ -98,7 +98,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="clear_hint2">
+           <widget class="QPushButton" name="clear_hint2_btn">
             <property name="font">
              <font>
               <family>Consolas</family>
@@ -111,7 +111,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="copy_hint2">
+           <widget class="QPushButton" name="copy_hint2_btn">
             <property name="font">
              <font>
               <family>Consolas</family>
@@ -151,7 +151,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="clear_hint3">
+           <widget class="QPushButton" name="clear_hint3_btn">
             <property name="font">
              <font>
               <family>Consolas</family>
@@ -164,7 +164,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="copy_hint3">
+           <widget class="QPushButton" name="copy_hint3_btn">
             <property name="font">
              <font>
               <family>Consolas</family>

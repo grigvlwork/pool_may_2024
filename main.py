@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 
 
-
 class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -33,11 +32,42 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         # self.model.setTable('hints')
         # self.model.select()
         self.hints_tv.setModel(self.model)
+        self.copy_hint1_btn.clicked.connect(self.set_hint1)
+        self.copy_hint2_btn.clicked.connect(self.set_hint2)
+        self.copy_hint3_btn.clicked.connect(self.set_hint3)
+        self.clear_hint1_btn.clicked.connect(self.clear_hint1)
+        self.clear_hint2_btn.clicked.connect(self.clear_hint2)
+        self.clear_hint3_btn.clicked.connect(self.clear_hint3)
 
-    def set_current_hint(self, number):
-        self.current_hint = number
-        print(number)
+    def set_hint1(self):
+        if self.hints_tv.model() is not None:
+            index = self.hints_tv.currentIndex()
+            hint = self.hints_tv.model().data(index)
+            if hint is not None:
+                self.hint1_le.setText(hint)
 
+    def set_hint2(self):
+        if self.hints_tv.model() is not None:
+            index = self.hints_tv.currentIndex()
+            hint = self.hints_tv.model().data(index)
+            if hint is not None:
+                self.hint2_le.setText(hint)
+
+    def set_hint3(self):
+        if self.hints_tv.model() is not None:
+            index = self.hints_tv.currentIndex()
+            hint = self.hints_tv.model().data(index)
+            if hint is not None:
+                self.hint3_le.setText(hint)
+
+    def clear_hint1(self):
+        self.hint1_le.clear()
+
+    def clear_hint2(self):
+        self.hint2_le.clear()
+
+    def clear_hint3(self):
+        self.hint3_le.clear()
 
     def choose_sql_model(self):
         self.load_query.clear()
@@ -59,6 +89,24 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.answer_pte.appendPlainText(text)
 
     def copy_my_answer(self):
+        if (self.hint1_le.text().strip() == '' or
+        self.hint2_le.text().strip() == '' or
+        self.hint3_le.text().strip() == ''):
+            msg = QMessageBox.critical(
+                None,
+                "Ошибка",
+                "Должны быть заполнены все подсказки"
+            )
+            return
+        if len({self.hint1_le.text().strip(),
+                self.hint2_le.text().strip(),
+                self.hint3_le.text().strip()}) < 3:
+            msg = QMessageBox.critical(
+                None,
+                "Ошибка",
+                "Подсказки должны отличаться"
+            )
+            return
         pyperclip.copy(self.answer_pte.toPlainText())
         if self.sql_env_rb.isChecked():
             topic = 0
@@ -68,9 +116,10 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
         self.db.commit()
-        self.hints_tv.show()
-
-
+        if self.sql_env_rb.isChecked():
+            self.choose_sql_model()
+        else:
+            self.choose_python_model()
 
 
 
@@ -92,4 +141,3 @@ if __name__ == '__main__':
     app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5', palette=qdarkstyle.DarkPalette))
     ex.show()
     sys.exit(app.exec_())
-
