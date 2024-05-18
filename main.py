@@ -68,25 +68,29 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.load_query.clear()
         self.load_query.exec("SELECT text FROM hints WHERE topic = 0 ORDER BY text")
         self.model.setQuery(self.load_query)
+        # self.hints_tv.setColumnHidden(0, True)
+        self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.show()
 
     def choose_python_model(self):
         self.load_query.clear()
         self.load_query.exec("SELECT text FROM hints WHERE topic = 1 ORDER BY text")
         self.model.setQuery(self.load_query)
+        # self.hints_tv.setColumnHidden(0, True)
+        self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.show()
 
     def create_my_answer(self):
-        text = '<hint1>\n' + self.hint1_le.text() + '\n</hint1>\n\n' + \
-               '<hint2>\n' + self.hint2_le.text() + '\n</hint2>\n\n' + \
-               '<hint3>\n' + self.hint3_le.text() + '\n</hint3>\n\n'
+        text = '<hint1>\n\n' + self.hint1_le.text() + '\n\n</hint1>\n\n' + \
+               '<hint2>\n\n' + self.hint2_le.text() + '\n\n</hint2>\n\n' + \
+               '<hint3>\n\n' + self.hint3_le.text() + '\n\n</hint3>\n\n'
         self.answer_pte.clear()
         self.answer_pte.appendPlainText(text)
 
     def copy_my_answer(self):
         if (self.hint1_le.text().strip() == '' or
-        self.hint2_le.text().strip() == '' or
-        self.hint3_le.text().strip() == ''):
+                self.hint2_le.text().strip() == '' or
+                self.hint3_le.text().strip() == ''):
             msg = QMessageBox.critical(
                 None,
                 "Ошибка",
@@ -115,7 +119,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.choose_sql_model()
         else:
             self.choose_python_model()
-
 
 
 def excepthook(exc_type, exc_value, exc_tb):
