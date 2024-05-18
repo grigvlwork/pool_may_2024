@@ -16,9 +16,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.hint1_le.textChanged.connect(self.create_my_answer)
         self.hint2_le.textChanged.connect(self.create_my_answer)
         self.hint3_le.textChanged.connect(self.create_my_answer)
-        # self.hint1_le.clicked.connect(self.set_current_hint(1))
-        # self.hint1_le.clicked.connect(self.set_current_hint(2))
-        # self.hint1_le.clicked.connect(self.set_current_hint(3))
         self.copy_answer_btn.clicked.connect(self.copy_my_answer)
         self.db = QSqlDatabase.addDatabase('QSQLITE')
         self.db.setDatabaseName('hints.db')
@@ -29,8 +26,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.add_query = QSqlQuery(self.db)
         self.model = QSqlQueryModel()
         self.current_hint = None
-        # self.model.setTable('hints')
-        # self.model.select()
         self.hints_tv.setModel(self.model)
         self.copy_hint1_btn.clicked.connect(self.set_hint1)
         self.copy_hint2_btn.clicked.connect(self.set_hint2)
