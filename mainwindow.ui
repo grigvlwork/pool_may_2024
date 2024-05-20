@@ -234,6 +234,19 @@
            </widget>
           </item>
           <item>
+           <widget class="QRadioButton" name="html_env_rb">
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>HTML</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>

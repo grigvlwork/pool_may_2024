@@ -23,6 +23,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.sql_env_rb.clicked.connect(self.choose_sql_model)
         self.python_env_rb.clicked.connect(self.choose_python_model)
         self.js_env_rb.clicked.connect(self.choose_js_model)
+        self.html_env_rb.clicked.connect(self.choose_html_model)
         self.load_query = QSqlQuery(self.db)
         self.add_query = QSqlQuery(self.db)
         self.model = QSqlQueryModel()
@@ -92,6 +93,15 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.hints_tv.verticalHeader().setVisible(False)
         self.hints_tv.show()
 
+    def choose_html_model(self):
+        self.load_query.clear()
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 3 ORDER BY Подсказка")
+        self.model.setQuery(self.load_query)
+        # self.hints_tv.setColumnHidden(0, True)
+        self.hints_tv.resizeColumnToContents(0)
+        self.hints_tv.verticalHeader().setVisible(False)
+        self.hints_tv.show()
+
     def create_my_answer(self):
         text = '<hint1>\n' + self.hint1_le.text() + '\n</hint1>\n\n' + \
                '<hint2>\n' + self.hint2_le.text() + '\n</hint2>\n\n' + \
@@ -125,6 +135,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             topic = 1
         elif self.js_env_rb.isChecked():
             topic = 2
+        elif self.html_env_rb.isChecked():
+            topic = 3
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
@@ -135,7 +147,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.choose_python_model()
         elif self.js_env_rb.isChecked():
             self.choose_js_model()
-
+        elif self.html_env_rb.isChecked():
+            self.choose_html_model()
 
 
 def excepthook(exc_type, exc_value, exc_tb):
