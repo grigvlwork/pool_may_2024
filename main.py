@@ -5,6 +5,9 @@ import qdarkstyle
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
 from mainwindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from datetime import datetime
+
+BEGIN = datetime(2024, 5, 1)
 
 
 class MyWidget(QMainWindow, Ui_MainWindow):
@@ -24,6 +27,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.html_env_rb.clicked.connect(self.choose_html_model)
         self.load_query = QSqlQuery(self.db)
         self.add_query = QSqlQuery(self.db)
+        self.find_query = QSqlQuery(self.db)
         self.model = QSqlQueryModel()
         self.current_hint = None
         self.hints_tv.setModel(self.model)
@@ -72,7 +76,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_sql_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 0 ORDER BY Подсказка")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 0 ORDER BY seconds")
         self.model.setQuery(self.load_query)
         # self.hints_tv.setColumnHidden(0, True)
         self.hints_tv.resizeColumnToContents(0)
@@ -81,7 +85,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_python_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 1 ORDER BY Подсказка")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 1 ORDER BY seconds")
         self.model.setQuery(self.load_query)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
@@ -89,7 +93,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_js_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 2 ORDER BY Подсказка")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 2 ORDER BY seconds")
         self.model.setQuery(self.load_query)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
@@ -97,7 +101,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_html_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 3 ORDER BY Подсказка")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 3 ORDER BY seconds")
         self.model.setQuery(self.load_query)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
@@ -138,6 +142,9 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             topic = 2
         elif self.html_env_rb.isChecked():
             topic = 3
+        result = self.find_query.exec(f'''SELECT * FROM HINTS WHERE TOPIC={topic} 
+            AND TEXT = "{self.hint1_le.text().strip()}"''')
+        t = self.find_query.first()
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
         self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
