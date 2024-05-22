@@ -2,11 +2,9 @@ import sys
 import traceback
 import pyperclip
 import qdarkstyle
-import sqlite3
-from PyQt5.QtSql import QSqlDatabase, QSqlTableModel, QSqlQuery, QSqlQueryModel
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlQueryModel
 from mainwindow import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
 
 
 class MyWidget(QMainWindow, Ui_MainWindow):
@@ -79,7 +77,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.load_query.clear()
         self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 1 ORDER BY Подсказка")
         self.model.setQuery(self.load_query)
-        # self.hints_tv.setColumnHidden(0, True)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
         self.hints_tv.show()
@@ -88,7 +85,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.load_query.clear()
         self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 2 ORDER BY Подсказка")
         self.model.setQuery(self.load_query)
-        # self.hints_tv.setColumnHidden(0, True)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
         self.hints_tv.show()
@@ -97,7 +93,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.load_query.clear()
         self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 3 ORDER BY Подсказка")
         self.model.setQuery(self.load_query)
-        # self.hints_tv.setColumnHidden(0, True)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
         self.hints_tv.show()
