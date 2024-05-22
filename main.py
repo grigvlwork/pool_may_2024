@@ -33,6 +33,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.clear_hint1_btn.clicked.connect(self.clear_hint1)
         self.clear_hint2_btn.clicked.connect(self.clear_hint2)
         self.clear_hint3_btn.clicked.connect(self.clear_hint3)
+        self.clear_hints_btn.clicked.connect(self.clear_hints)
 
     def set_hint1(self):
         if self.hints_tv.model() is not None:
@@ -62,6 +63,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.hint2_le.clear()
 
     def clear_hint3(self):
+        self.hint3_le.clear()
+
+    def clear_hints(self):
+        self.hint1_le.clear()
+        self.hint2_le.clear()
         self.hint3_le.clear()
 
     def choose_sql_model(self):
