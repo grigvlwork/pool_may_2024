@@ -27,11 +27,14 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.html_env_rb.clicked.connect(self.choose_html_model)
         self.load_query = QSqlQuery(self.db)
         self.add_query = QSqlQuery(self.db)
-        # self.find_query = QSqlQuery(self.db)
+        self.find_query = QSqlQuery(self.db)
         self.update_query = QSqlQuery(self.db)
         self.model = QSqlQueryModel()
         self.current_hint = None
         self.hints_tv.setModel(self.model)
+        self.use_hint1 = None
+        self.use_hint2 = None
+        self.use_hint3 = None
         self.copy_hint1_btn.clicked.connect(self.set_hint1)
         self.copy_hint2_btn.clicked.connect(self.set_hint2)
         self.copy_hint3_btn.clicked.connect(self.set_hint3)
@@ -50,6 +53,10 @@ class MyWidget(QMainWindow, Ui_MainWindow):
                 self.update_query.exec()
                 self.db.commit()
                 self.refresh_table()
+                self.find_query.prepare(f'SELECT use FROM hints WHERE text = "{hint}"')
+                self.find_query.exec()
+                self.find_query.first()
+                self.use_hint1 = self.find_query.value(0)
 
     def set_hint2(self):
         if self.hints_tv.model() is not None:
@@ -61,7 +68,10 @@ class MyWidget(QMainWindow, Ui_MainWindow):
                 self.update_query.exec()
                 self.db.commit()
                 self.refresh_table()
-
+                self.find_query.prepare(f'SELECT use FROM hints WHERE text = "{hint}"')
+                self.find_query.exec()
+                self.find_query.first()
+                self.use_hint2 = self.find_query.value(0)
 
     def set_hint3(self):
         if self.hints_tv.model() is not None:
@@ -73,7 +83,10 @@ class MyWidget(QMainWindow, Ui_MainWindow):
                 self.update_query.exec()
                 self.db.commit()
                 self.refresh_table()
-
+                self.find_query.prepare(f'SELECT use FROM hints WHERE text = "{hint}"')
+                self.find_query.exec()
+                self.find_query.first()
+                self.use_hint3 = self.find_query.value(0)
 
     def clear_hint1(self):
         self.hint1_le.clear()
@@ -138,7 +151,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         elif self.html_env_rb.isChecked():
             self.choose_html_model()
 
-
     def copy_my_answer(self):
         if (self.hint1_le.text().strip() == '' or
                 self.hint2_le.text().strip() == '' or
@@ -159,6 +171,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             )
             return
         pyperclip.copy(self.answer_pte.toPlainText())
+        topic = 0
         if self.sql_env_rb.isChecked():
             topic = 0
         elif self.python_env_rb.isChecked():
@@ -167,12 +180,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             topic = 2
         elif self.html_env_rb.isChecked():
             topic = 3
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
+        self.add_query.exec(f'INSERT INTO HINTS (TOPIC, TEXT, USE) VALUES ({topic}, "{self.hint1_le.text().strip()}", {self.use_hint1})')
+        self.add_query.exec(f'INSERT INTO HINTS (TOPIC, TEXT, USE) VALUES ({topic}, "{self.hint2_le.text().strip()}", {self.use_hint2}))')
+        self.add_query.exec(f'INSERT INTO HINTS (TOPIC, TEXT, USE) VALUES ({topic}, "{self.hint3_le.text().strip()}", {self.use_hint3}))')
         self.db.commit()
         self.refresh_table()
-
 
 
 def excepthook(exc_type, exc_value, exc_tb):
