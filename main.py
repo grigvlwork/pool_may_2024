@@ -101,6 +101,9 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.hint1_le.clear()
         self.hint2_le.clear()
         self.hint3_le.clear()
+        self.use_hint1 = None
+        self.use_hint2 = None
+        self.use_hint3 = None
 
     def choose_sql_model(self):
         self.load_query.clear()
@@ -180,11 +183,18 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             topic = 2
         elif self.html_env_rb.isChecked():
             topic = 3
+        if self.use_hint1 is None:
+            self.use_hint1 = 0
+        if self.use_hint2 is None:
+            self.use_hint2 = 0
+        if self.use_hint3 is None:
+            self.use_hint3 = 0
         self.add_query.exec(f'INSERT INTO HINTS (TOPIC, TEXT, USE) VALUES ({topic}, "{self.hint1_le.text().strip()}", {self.use_hint1})')
         self.add_query.exec(f'INSERT INTO HINTS (TOPIC, TEXT, USE) VALUES ({topic}, "{self.hint2_le.text().strip()}", {self.use_hint2}))')
         self.add_query.exec(f'INSERT INTO HINTS (TOPIC, TEXT, USE) VALUES ({topic}, "{self.hint3_le.text().strip()}", {self.use_hint3}))')
         self.db.commit()
         self.refresh_table()
+        self.clear_hints()
 
 
 def excepthook(exc_type, exc_value, exc_tb):
