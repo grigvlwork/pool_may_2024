@@ -27,7 +27,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.html_env_rb.clicked.connect(self.choose_html_model)
         self.load_query = QSqlQuery(self.db)
         self.add_query = QSqlQuery(self.db)
-        self.find_query = QSqlQuery(self.db)
+        # self.find_query = QSqlQuery(self.db)
+        self.update_query = QSqlQuery(self.db)
         self.model = QSqlQueryModel()
         self.current_hint = None
         self.hints_tv.setModel(self.model)
@@ -45,6 +46,10 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             hint = self.hints_tv.model().data(index)
             if hint is not None:
                 self.hint1_le.setText(hint)
+                self.update_query.prepare(f'UPDATE hints SET use = use + 1 WHERE text = "{hint}"')
+                self.update_query.exec()
+                self.db.commit()
+                self.refresh_table()
 
     def set_hint2(self):
         if self.hints_tv.model() is not None:
@@ -52,6 +57,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             hint = self.hints_tv.model().data(index)
             if hint is not None:
                 self.hint2_le.setText(hint)
+                self.update_query.prepare(f'UPDATE hints SET use = use + 1 WHERE text = "{hint}"')
+                self.update_query.exec()
+                self.db.commit()
+                self.refresh_table()
+
 
     def set_hint3(self):
         if self.hints_tv.model() is not None:
@@ -59,6 +69,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             hint = self.hints_tv.model().data(index)
             if hint is not None:
                 self.hint3_le.setText(hint)
+                self.update_query.prepare(f'UPDATE hints SET use = use + 1 WHERE text = "{hint}"')
+                self.update_query.exec()
+                self.db.commit()
+                self.refresh_table()
+
 
     def clear_hint1(self):
         self.hint1_le.clear()
@@ -76,16 +91,15 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_sql_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 0 ORDER BY seconds")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 0 ORDER BY use, text")
         self.model.setQuery(self.load_query)
-        # self.hints_tv.setColumnHidden(0, True)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
         self.hints_tv.show()
 
     def choose_python_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 1 ORDER BY seconds")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 1 ORDER BY use, text")
         self.model.setQuery(self.load_query)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
@@ -93,7 +107,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_js_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 2 ORDER BY seconds")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 2 ORDER BY use, text")
         self.model.setQuery(self.load_query)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
@@ -101,7 +115,7 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def choose_html_model(self):
         self.load_query.clear()
-        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 3 ORDER BY seconds")
+        self.load_query.exec("SELECT text AS Подсказка FROM hints WHERE topic = 3 ORDER BY use, text")
         self.model.setQuery(self.load_query)
         self.hints_tv.resizeColumnToContents(0)
         self.hints_tv.verticalHeader().setVisible(False)
@@ -113,6 +127,29 @@ class MyWidget(QMainWindow, Ui_MainWindow):
                '<hint3>\n' + self.hint3_le.text() + '\n</hint3>'
         self.answer_pte.clear()
         self.answer_pte.appendPlainText(text)
+
+    def refresh_table(self):
+        if self.sql_env_rb.isChecked():
+            topic = 0
+        elif self.python_env_rb.isChecked():
+            topic = 1
+        elif self.js_env_rb.isChecked():
+            topic = 2
+        elif self.html_env_rb.isChecked():
+            topic = 3
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
+        self.db.commit()
+        if self.sql_env_rb.isChecked():
+            self.choose_sql_model()
+        elif self.python_env_rb.isChecked():
+            self.choose_python_model()
+        elif self.js_env_rb.isChecked():
+            self.choose_js_model()
+        elif self.html_env_rb.isChecked():
+            self.choose_html_model()
+
 
     def copy_my_answer(self):
         if (self.hint1_le.text().strip() == '' or
@@ -134,29 +171,8 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             )
             return
         pyperclip.copy(self.answer_pte.toPlainText())
-        if self.sql_env_rb.isChecked():
-            topic = 0
-        elif self.python_env_rb.isChecked():
-            topic = 1
-        elif self.js_env_rb.isChecked():
-            topic = 2
-        elif self.html_env_rb.isChecked():
-            topic = 3
-        result = self.find_query.exec(f'''SELECT * FROM HINTS WHERE TOPIC={topic} 
-            AND TEXT = "{self.hint1_le.text().strip()}"''')
-        t = self.find_query.first()
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
-        self.db.commit()
-        if self.sql_env_rb.isChecked():
-            self.choose_sql_model()
-        elif self.python_env_rb.isChecked():
-            self.choose_python_model()
-        elif self.js_env_rb.isChecked():
-            self.choose_js_model()
-        elif self.html_env_rb.isChecked():
-            self.choose_html_model()
+        self.refresh_table()
+
 
 
 def excepthook(exc_type, exc_value, exc_tb):
