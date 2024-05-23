@@ -130,18 +130,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
 
     def refresh_table(self):
         if self.sql_env_rb.isChecked():
-            topic = 0
-        elif self.python_env_rb.isChecked():
-            topic = 1
-        elif self.js_env_rb.isChecked():
-            topic = 2
-        elif self.html_env_rb.isChecked():
-            topic = 3
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
-        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
-        self.db.commit()
-        if self.sql_env_rb.isChecked():
             self.choose_sql_model()
         elif self.python_env_rb.isChecked():
             self.choose_python_model()
@@ -171,6 +159,18 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             )
             return
         pyperclip.copy(self.answer_pte.toPlainText())
+        if self.sql_env_rb.isChecked():
+            topic = 0
+        elif self.python_env_rb.isChecked():
+            topic = 1
+        elif self.js_env_rb.isChecked():
+            topic = 2
+        elif self.html_env_rb.isChecked():
+            topic = 3
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint1_le.text().strip()}")')
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint2_le.text().strip()}")')
+        self.add_query.exec_(f'INSERT INTO HINTS (TOPIC, TEXT) VALUES ({topic}, "{self.hint3_le.text().strip()}")')
+        self.db.commit()
         self.refresh_table()
 
 
